@@ -1,0 +1,34 @@
+
+import React, { useEffect, useRef } from 'react'
+import Phaser from 'phaser'
+import { gameConfig } from '../game/config/gameConfig.js'
+import BootScene from '../game/scenes/BootScene.js'
+import PreloadScene from '../game/scenes/PreloadScene.js'
+import HubScene from '../game/scenes/HubScene.js'
+import VeniceScene from '../game/scenes/VeniceScene.js'
+import UIOverlayScene from '../game/scenes/UIOverlayScene.js'
+
+export default function PhaserGame() {
+  const containerRef = useRef(null)
+  const gameRef = useRef(null)
+
+  useEffect(() => {
+    const config = {
+      ...gameConfig,
+      parent: containerRef.current,
+      scene: [BootScene, PreloadScene, HubScene, VeniceScene, UIOverlayScene],
+    }
+    gameRef.current = new Phaser.Game(config)
+
+    return () => {
+      if (gameRef.current) {
+        gameRef.current.destroy(true)
+        gameRef.current = null
+      }
+    }
+  }, [])
+
+  return (
+    <div ref={containerRef} style={{ width: gameConfig.width, height: gameConfig.height, border: '1px solid #e5e5e5', borderRadius: 12, overflow: 'hidden' }} />
+  )
+}

@@ -1,0 +1,15 @@
+{
+  "flood_console": {
+    "type": "toggleMatrix",
+    "rows": 1,
+    "cols": 4,
+    "solution": [
+      1,
+      0,
+      1,
+      1
+    ],
+    "reward": "Badge Venise",
+    "hint": "Les LED vertes alignées forment le motif de la lagune (1-0-1-1)."
+  }
+}
