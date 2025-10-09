@@ -3,16 +3,16 @@ import Phaser from "phaser";
 import { puzzleManager } from "../systems/puzzleManager";
 import { badgeManager } from "../systems/BadgeManager"; 
 import { PROGRESSION } from "../systems/ProgressionManager"; 
+import { SCENES } from "../constants/scenes"; 
 
 export default class VeniceScene extends Phaser.Scene {
     constructor() {
-        super("VeniceScene");
+        super(SCENES.VENICE);
         this.handleBadgeUpdate = this.handleBadgeUpdate.bind(this);
     }
     
     handleBadgeUpdate(badgeData) {
         const { id: badgeId } = badgeData;
-        // Vérifie si le badge appartient à cette salle (badge-venise-1 à badge-venise-8)
         if (badgeId.startsWith("badge-venise-")) {
             this.time.delayedCall(300, () => {
                 this.children.getAll().forEach(child => {
@@ -20,7 +20,7 @@ export default class VeniceScene extends Phaser.Scene {
                          child.destroy();
                     }
                 });
-                this.create(); // Recrée la scène avec le nouvel état
+                this.create();
             }, [], this); 
         }
     }
@@ -32,6 +32,32 @@ export default class VeniceScene extends Phaser.Scene {
 
     shutdown() {
         badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
+    }
+
+    // Bouton de retour vers le Hub (inchangé)
+    createBackButton(w, h) {
+        const backButton = this.add
+            .rectangle(w - 70, 40, 120, 50, 0x5a5a5a) 
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff)
+            .setAlpha(0.8);
+
+        this.add
+            .text(w - 70, 40, "ACCUEIL", {
+                fontFamily: "Arial", 
+                fontSize: "16px", 
+                color: "#ffffff",
+                fontWeight: "bold"
+            })
+            .setOrigin(0.5);
+
+        backButton.on("pointerdown", () => {
+            this.scene.stop(this.sys.settings.key);
+            this.scene.start(SCENES.HUB);
+        });
+        
+        backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
+        backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
     }
 
     create() {
@@ -62,17 +88,18 @@ export default class VeniceScene extends Phaser.Scene {
                         };
                         break;
                     case "venice-letter-2":
-                        // 🚨 Nouvelle énigme pour remplacer le toggle peu pertinent
                         currentPuzzleData = { ...info, type: "letterpuzzle", title: "Histoire Urbaine : Phase 2", 
                             prompt: "Quel célèbre pont vénitien relie le Sestiere de San Marco et San Polo, et fut le seul à traverser le Grand Canal avant le XIXe siècle ? (Mot en 6 lettres)",
                             answer: "Rialto",
                             hints: ["Il est célèbre pour ses boutiques.", "Il est souvent encombré de touristes."],
                         };
                         break;
+                    // 🚨 MODIFICATION : Remplacement du Toggle par un Quiz plus pertinent sur le MOSE
                     case "venice-toggle-3":
-                        currentPuzzleData = { ...info, type: "toggle", title: "Régulation MOSE : Phase 3", 
-                            prompt: "Activez les vannes pour bloquer la montée des eaux. (Bas = Actif / Haut = Inactif)",
-                            targets: [true, false, true, false], 
+                        currentPuzzleData = { ...info, type: "quiz", title: "Barrières MOSE : Phase 3", 
+                            prompt: "Quelle est la principale critique environnementale soulevée contre le système de barrières MOSE ?",
+                            choices: ["Il n'est pas assez haut pour les marées futures.", "Il modifie l'écosystème de la lagune en retenant les sédiments.", "Il est trop visible et gâche le paysage."], answerIndex: 1,
+                            hints: ["Pensez aux conséquences de la fermeture des vannes sur la vie marine et la circulation de l'eau.", "Ceci affecte les marais salants."],
                         };
                         break;
                     case "venice-drag-4":
@@ -97,9 +124,10 @@ export default class VeniceScene extends Phaser.Scene {
                         };
                         break;
                     case "venice-toggle-7":
+                        // Ajout d'une condition logique aux toggles pour plus de pertinence
                         currentPuzzleData = { ...info, type: "toggle", title: "Réseau de Surveillance : Phase 7", 
-                            prompt: "Activez les capteurs de profondeur fonctionnels (Vrai = Actif).",
-                            targets: [true, true, false, true], 
+                            prompt: "Activez les capteurs de profondeur *fonctionnels* et *hors zone de sédimentation* (Vrai = Actif).",
+                            targets: [true, false, true, true], // Nouvelle logique basée sur l'état/localisation
                         };
                         break;
                     case "venice-drag-8":
@@ -111,7 +139,7 @@ export default class VeniceScene extends Phaser.Scene {
                         break;
                 }
 
-                currentPuzzleData.scene = this.sys.settings.key; // Ajoute toujours la clé de scène
+                currentPuzzleData.scene = this.sys.settings.key;
                 currentPuzzleData.badgeId = info.badgeId;
                 currentPuzzleData.id = key;
                 buttonText = `Console Inondation (Niv. ${currentLevel}/8)`;
@@ -145,5 +173,8 @@ export default class VeniceScene extends Phaser.Scene {
                  console.log("Salle Complète !");
             }
         });
+
+        // CRÉATION DU BOUTON DE RETOUR
+        this.createBackButton(w, h);
     }
 }
