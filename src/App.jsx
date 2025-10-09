@@ -1,4 +1,3 @@
-// src/App.jsx
 import React from "react";
 import PhaserGame from "./components/PhaserGame.jsx";
 import PuzzleModal from "./components/PuzzleModal.jsx";
@@ -6,57 +5,95 @@ import BadgeDisplay from "./components/BadgeDisplay.jsx";
 
 export default function App() {
   return (
-    // Conteneur principal de l'application
     <div
       style={{
-        display: "grid",
-        gridTemplateColumns: "1fr",
-        gap: 12,
-        padding: 12,
+        width: "100vw",
+        height: "100vh",
+        margin: 0,
+        padding: 0,
+        display: "flex",
+        flexDirection: "column",
+        background: "linear-gradient(180deg, #001a14 0%, #003d30 100%)",
+        overflow: "hidden",
         fontFamily: "Inter, system-ui, sans-serif",
-        backgroundColor: "#012b27", // Fond sombre de l'UI
-        color: "#dfffe8", // Texte clair
-        minHeight: "100vh",
-        position: "relative", // Pour que BadgeDisplay se positionne correctement en absolute
+        color: "#eafff3",
       }}
     >
-      {/* 1. Header (Titre) */}
+      {/* === En-tête === */}
       <header
         style={{
-          display: "flex",
-          justifyContent: "center", // Centre le titre
-          alignItems: "center",
-          paddingBottom: "10px",
+          textAlign: "center",
+          padding: "0.5rem 0",
+          background: "rgba(0, 40, 30, 0.7)",
+          borderBottom: "2px solid #1e6f5c",
+          flex: "0 0 auto",
         }}
       >
-        <h1 style={{ margin: 0, fontSize: "1.5em", color: "#66ffcc" }}>
+        <h1
+          style={{
+            fontSize: "clamp(1.2rem, 2vw, 2rem)",
+            color: "#66ffcc",
+            textShadow: "0 0 8px #00ffcc55",
+            margin: 0,
+          }}
+        >
           🌍 TerraNova 2045 — Escape Game
         </h1>
       </header>
-      
-      {/* 2. Suivi des Badges (Flotte en haut à droite) */}
-      {/* Le BadgeDisplay a un style 'position: absolute' interne pour se placer sur le coin */}
-      <BadgeDisplay /> 
 
-      {/* 3. Zone de jeu Phaser (Le Canvas) */}
-      <div 
+      {/* === Zone de jeu === */}
+      <main
         style={{
-            border: "4px solid #1e6f5c", // Bordure pour encadrer le jeu
-            borderRadius: "8px",
-            overflow: "hidden", // Assure que le jeu reste dans les limites
-            // Le Canvas de Phaser prendra la taille restante
+          flex: 1,
+          position: "relative",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          background: "radial-gradient(circle at center, #002b22 0%, #001a14 100%)",
         }}
       >
-        <PhaserGame />
-      </div>
+        {/* Jeu Phaser plein écran */}
+        <div
+          id="game-container"
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+          }}
+        >
+          <PhaserGame />
+        </div>
 
-      {/* 4. Modale (S'affiche par-dessus tout quand nécessaire) */}
-      <PuzzleModal />
+        {/* Badges affichés au-dessus */}
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "20px",
+            zIndex: 10,
+          }}
+        >
+          <BadgeDisplay />
+        </div>
 
-      {/* 5. Footer (Pied de page optionnel) */}
-      <footer style={{ opacity: 0.5, fontSize: "0.8em", textAlign: "center", marginTop: "10px" }}>
-        {/* Enlevez l'ancienne phrase d'astuce ici s'il y en avait une. */}
-        © 2045 Projet TerraNova - Centre de Commandement 
+        {/* Modale des énigmes */}
+        <PuzzleModal />
+      </main>
+
+      {/* === Pied de page === */}
+      <footer
+        style={{
+          textAlign: "center",
+          padding: "0.5rem 0",
+          fontSize: "0.9rem",
+          background: "rgba(0, 40, 30, 0.7)",
+          borderTop: "2px solid #1e6f5c",
+          color: "#aef5d2",
+          flex: "0 0 auto",
+        }}
+      >
+        © 2045 — Projet TerraNova 🌱 Sauvez la planète
       </footer>
     </div>
   );
