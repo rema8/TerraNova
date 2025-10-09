@@ -9,6 +9,20 @@ export default class MarocScene extends Phaser.Scene {
         super("MarocScene");
     }
 
+    // 🚨 CORRECTION DU BUG DE DOUBLE-JEU
+    init() {
+        this.handleProgression = (data) => {
+            if (data.scene === this.sys.settings.key) {
+                this.scene.restart();
+            }
+        };
+        badgeManager.on('progressed', this.handleProgression);
+    }
+    
+    shutdown() {
+        badgeManager.off('progressed', this.handleProgression);
+    }
+
     create() {
         const { width: w, height: h } = this.scale;
         this.cameras.main.setBackgroundColor("#3d2b1f");
@@ -18,11 +32,11 @@ export default class MarocScene extends Phaser.Scene {
         const PUZZLE_2 = PROGRESSION["maroc-quiz-2"];
 
         let currentPuzzleData = null;
-        let buttonText = "Salle Complète";
+        let buttonText = "Salle Complète !";
         let buttonColor = 0x6a6a6a; 
 
         if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
-            // Énigme 1 non résolue : Drag & Drop (Points Cardinaux)
+            // Énigme 1 : Drag & Drop
             currentPuzzleData = {
                 ...PUZZLE_1,
                 type: "dragdrop", 
@@ -35,7 +49,7 @@ export default class MarocScene extends Phaser.Scene {
             buttonText = "Régler les miroirs (Niv. 1)";
             buttonColor = 0xe6a157;
         } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
-            // Énigme 1 résolue, Énigme 2 non résolue : Quiz
+            // Énigme 2 : Quiz
             currentPuzzleData = {
                 ...PUZZLE_2,
                 type: "quiz", 
@@ -46,7 +60,7 @@ export default class MarocScene extends Phaser.Scene {
                 scene: this.sys.settings.key,
             };
             buttonText = "Vérifier la consommation (Niv. 2)";
-            buttonColor = 0xf39c12; // Orange
+            buttonColor = 0xf39c12; 
         }
 
         // --- RENDU PHASER ---
@@ -58,9 +72,6 @@ export default class MarocScene extends Phaser.Scene {
         btn.on("pointerdown", () => {
             if (currentPuzzleData) {
                 puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-                if (badgeManager.unlockedBadges.has(currentPuzzleData.badgeId)) {
-                     this.scene.restart();
-                }
             } else {
                  console.log("Salle Complète !");
             }

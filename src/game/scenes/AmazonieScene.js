@@ -9,20 +9,34 @@ export default class AmazonieScene extends Phaser.Scene {
         super("AmazonieScene");
     }
 
+    //CORRECTION DU BUG DE DOUBLE-JEU
+    init() {
+        this.handleProgression = (data) => {
+            if (data.scene === this.sys.settings.key) {
+                this.scene.restart();
+            }
+        };
+        badgeManager.on('progressed', this.handleProgression);
+    }
+    
+    shutdown() {
+        badgeManager.off('progressed', this.handleProgression);
+    }
+    
     create() {
         const { width: w, height: h } = this.scale;
-        this.cameras.main.setBackgroundColor("#084c28"); // Vert jungle
+        this.cameras.main.setBackgroundColor("#084c28"); 
         
         // --- LOGIQUE DE PROGRESSION ---
         const PUZZLE_1 = PROGRESSION["amazonie-forest-1"];
         const PUZZLE_2 = PROGRESSION["amazonie-toggle-2"];
 
         let currentPuzzleData = null;
-        let buttonText = "Salle Complète";
+        let buttonText = "Salle Complète !";
         let buttonColor = 0x6a6a6a; 
 
         if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
-            // Énigme 1 non résolue : Drag & Drop (Racines)
+            // Énigme 1 : Drag & Drop
             currentPuzzleData = {
                 ...PUZZLE_1,
                 type: "dragdrop", 
@@ -35,17 +49,17 @@ export default class AmazonieScene extends Phaser.Scene {
             buttonText = "Déforestation (Niv. 1)";
             buttonColor = 0x126b40;
         } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
-            // Énigme 1 résolue, Énigme 2 non résolue : Toggle
+            // Énigme 2 : Toggle
             currentPuzzleData = {
                 ...PUZZLE_2,
                 type: "toggle", 
                 title: "Analyse des Données (Niv. 2)",
                 prompt: "Activez les capteurs indiquant une qualité d'air Supérieure à la moyenne.",
-                targets: [false, true, true, false, true], // Exemple de solution Toggle
+                targets: [false, true, true, false, true], 
                 scene: this.sys.settings.key,
             };
             buttonText = "Contrôle des Capteurs (Niv. 2)";
-            buttonColor = 0x27ae60; // Vert clair
+            buttonColor = 0x27ae60; 
         }
 
         // --- RENDU PHASER ---
@@ -57,9 +71,6 @@ export default class AmazonieScene extends Phaser.Scene {
         puzzleBtn.on("pointerup", () => {
             if (currentPuzzleData) {
                 puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-                if (badgeManager.unlockedBadges.has(currentPuzzleData.badgeId)) {
-                     this.scene.restart();
-                }
             } else {
                  console.log("Salle Complète !");
             }

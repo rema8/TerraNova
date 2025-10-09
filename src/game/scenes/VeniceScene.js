@@ -8,6 +8,24 @@ export default class VeniceScene extends Phaser.Scene {
     constructor() {
         super("VeniceScene");
     }
+    
+    // 🚨 CORRECTION DU BUG DE DOUBLE-JEU : On écoute ici la progression
+    init() {
+        this.handleProgression = (data) => {
+            if (data.scene === this.sys.settings.key) {
+                this.scene.restart();
+            }
+        };
+        badgeManager.on('progressed', this.handleProgression);
+    }
+    
+    shutdown() {
+        badgeManager.off('progressed', this.handleProgression);
+    }
+    
+    preload() {
+        this.load.image("venice_bg", "assets/bg/venice.jpg");
+    }
 
     create() {
         const w = this.scale.width;
@@ -19,24 +37,24 @@ export default class VeniceScene extends Phaser.Scene {
         const PUZZLE_2 = PROGRESSION["venice-toggle-2"];
 
         let currentPuzzleData = null;
-        let buttonText = "Salle Complète";
-        let buttonColor = 0x6a6a6a; // Gris
+        let buttonText = "Salle Complète !";
+        let buttonColor = 0x6a6a6a; 
 
         if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
-            // Énigme 1 non résolue : Quiz
+            // Énigme 1 : Quiz
             currentPuzzleData = {
-                ...PUZZLE_1, // Utilise les métadonnées de PROGRESSION
+                ...PUZZLE_1, 
                 type: "quiz", 
                 title: "Gestion des Eaux : Phase 1",
                 prompt: "Quel vent de Méditerranée, soufflant du Sud-Est, est le principal facteur de l'Acqua Alta ?",
                 choices: ["Scirocco", "Tramontane", "Bora"],
                 answerIndex: 0,
-                scene: this.sys.settings.key, // Enregistre le nom de la scène pour le rechargement
+                scene: this.sys.settings.key, 
             };
             buttonText = "Console Inondation (Niveau 1)";
             buttonColor = 0x1e6f5c;
         } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
-            // Énigme 1 résolue, Énigme 2 non résolue : Toggle
+            // Énigme 2 : Toggle
             currentPuzzleData = {
                 ...PUZZLE_2,
                 type: "toggle", 
@@ -46,9 +64,8 @@ export default class VeniceScene extends Phaser.Scene {
                 scene: this.sys.settings.key,
             };
             buttonText = "Console Inondation (Niveau 2)";
-            buttonColor = 0x2980b9; // Bleu
+            buttonColor = 0x2980b9; 
         }
-
 
         // --- RENDU PHASER ---
         this.add.text(w / 2, 40, "Venise 2045 — Centre de contrôle", {
@@ -71,13 +88,11 @@ export default class VeniceScene extends Phaser.Scene {
         btn.on("pointerdown", () => {
             if (currentPuzzleData) {
                 puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-                // Si l'énigme est résolue, redémarre la scène pour mettre à jour le bouton
-                if (badgeManager.unlockedBadges.has(currentPuzzleData.badgeId)) {
-                     this.scene.restart();
-                }
             } else {
                  console.log("Salle Complète !");
             }
         });
+        
+        // Supprimez toute astuce affichée en bas de l'écran ici si elle est codée dans cette scène.
     }
 }

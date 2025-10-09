@@ -1,14 +1,12 @@
 // src/game/systems/badgeManager.js
 
-// 🚨 REMPLACER : import { EventEmitter } from "events";
-// PAR :
 import Phaser from "phaser"; 
+import { PROGRESSION } from "./ProgressionManager";
 
 // Utiliser l'EventEmitter intégré à Phaser
 class BadgeManager extends Phaser.Events.EventEmitter { 
   constructor() {
     super();
-    // Clé: ID de l'énigme | Valeur: ID du badge débloqué
     this.solvedPuzzles = new Set();
     this.unlockedBadges = new Set();
   }
@@ -24,8 +22,16 @@ class BadgeManager extends Phaser.Events.EventEmitter {
 
     if (badgeId && !this.unlockedBadges.has(badgeId)) {
       this.unlockedBadges.add(badgeId);
-      // Le manager émet l'événement de la même manière que l'ancien code
+      
+      // Événement pour la notification UI
       this.emit("badgeUnlocked", { id: badgeId, puzzle: puzzleId });
+      
+      //  NOUVEL ÉVÉNEMENT : Informe la scène de redémarrer après une progression réussie
+      const sceneKey = PROGRESSION[puzzleId]?.scene;
+      if (sceneKey) {
+          this.emit("progressed", { puzzleId, scene: sceneKey }); 
+      }
+      
       console.log(`🎉 Badge débloqué : ${badgeId} !`);
     }
   }

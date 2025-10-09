@@ -8,21 +8,35 @@ export default class KenyaScene extends Phaser.Scene {
     constructor() {
         super("KenyaScene");
     }
-
+    
+    // 🚨 CORRECTION DU BUG DE DOUBLE-JEU
+    init() {
+        this.handleProgression = (data) => {
+            if (data.scene === this.sys.settings.key) {
+                this.scene.restart();
+            }
+        };
+        badgeManager.on('progressed', this.handleProgression);
+    }
+    
+    shutdown() {
+        badgeManager.off('progressed', this.handleProgression);
+    }
+    
     create() {
         const { width: w, height: h } = this.scale;
-        this.cameras.main.setBackgroundColor("#2a5934"); // Vert savane 🌿
+        this.cameras.main.setBackgroundColor("#2a5934"); 
         
         // --- LOGIQUE DE PROGRESSION ---
         const PUZZLE_1 = PROGRESSION["kenya-faune-quiz-1"];
         const PUZZLE_2 = PROGRESSION["kenya-dragdrop-2"];
 
         let currentPuzzleData = null;
-        let buttonText = "Salle Complète";
+        let buttonText = "Salle Complète !";
         let buttonColor = 0x6a6a6a; 
 
         if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
-            // Énigme 1 non résolue : Quiz
+            // Énigme 1 : Quiz
             currentPuzzleData = {
                 ...PUZZLE_1,
                 type: "quiz", 
@@ -35,7 +49,7 @@ export default class KenyaScene extends Phaser.Scene {
             buttonText = "Protection de la Faune (Niv. 1)";
             buttonColor = 0x447a3f;
         } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
-            // Énigme 1 résolue, Énigme 2 non résolue : DragDrop
+            // Énigme 2 : DragDrop
             currentPuzzleData = {
                 ...PUZZLE_2,
                 type: "dragdrop", 
@@ -46,7 +60,7 @@ export default class KenyaScene extends Phaser.Scene {
                 scene: this.sys.settings.key,
             };
             buttonText = "Protection de la Faune (Niv. 2)";
-            buttonColor = 0x8e44ad; // Mauve
+            buttonColor = 0x8e44ad; 
         }
 
         // --- RENDU PHASER ---
@@ -58,9 +72,6 @@ export default class KenyaScene extends Phaser.Scene {
         puzzleBtn.on("pointerup", () => {
             if (currentPuzzleData) {
                 puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-                if (badgeManager.unlockedBadges.has(currentPuzzleData.badgeId)) {
-                     this.scene.restart();
-                }
             } else {
                  console.log("Salle Complète !");
             }
