@@ -25,7 +25,7 @@ export default function App() {
         }}
       >
         <h1 style={{ margin: 0 }}>TerraNova 2045 — Escape Game</h1>
-        <small>Prototype React + Phaser</small>
+        
       </header>
 
       <PhaserGame />
@@ -34,10 +34,6 @@ export default function App() {
       <PuzzleModal />
 
       <footer style={{ opacity: 0.7 }}>
-        <p style={{ margin: 0 }}>
-          Astuce : cliquez sur la console inondation dans la salle Venise pour
-          résoudre une énigme.
-        </p>
       </footer>
     </div>
   );

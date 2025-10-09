@@ -1,46 +1,69 @@
 // src/game/scenes/KenyaScene.js
-
 import Phaser from "phaser";
-import { SCENES } from "../constants/scenes.js";
-import { puzzleManager } from "../systems/puzzleManager.js";
+import { puzzleManager } from "../systems/puzzleManager";
+import { badgeManager } from "../systems/BadgeManager"; 
+import { PROGRESSION } from "../systems/ProgressionManager";
 
 export default class KenyaScene extends Phaser.Scene {
-  constructor() {
-    super("KenyaScene");
-  }
+    constructor() {
+        super("KenyaScene");
+    }
 
-  create() {
-    const { width, height } = this.scale;
-    this.cameras.main.setBackgroundColor("#2a5934"); // Vert savane 🌿
-    this.add.text(width / 2, 60, "Salle : Kenya", {
-      fontSize: "28px",
-      color: "#ffffff",
-      fontFamily: "monospace",
-    }).setOrigin(0.5);
+    create() {
+        const { width: w, height: h } = this.scale;
+        this.cameras.main.setBackgroundColor("#2a5934"); // Vert savane 🌿
+        
+        // --- LOGIQUE DE PROGRESSION ---
+        const PUZZLE_1 = PROGRESSION["kenya-faune-quiz-1"];
+        const PUZZLE_2 = PROGRESSION["kenya-dragdrop-2"];
 
-    const puzzleBtn = this.add.rectangle(width / 2, height / 2, 220, 60, 0x447a3f).setInteractive({ useHandCursor: true });
-    this.add.text(width / 2, height / 2, "Protection de la faune", {
-      fontSize: "18px",
-      color: "#ffffff",
-    }).setOrigin(0.5);
+        let currentPuzzleData = null;
+        let buttonText = "Salle Complète";
+        let buttonColor = 0x6a6a6a; 
 
-    puzzleBtn.on("pointerup", () => {
-      puzzleManager.openPuzzle("kenya-faune-quiz", {
-        id: "kenya-faune-quiz",
-        type: "quiz", 
-        title: "Lutte Anti-Braconnage",
-        prompt: "Le braconnage de quel 'Géant de la Savane' est principalement motivé par le commerce illégal de l'ivoire ?",
-        choices: [
-          "Le grand mammifère à corne", // Rhinocéros
-          "Le plus rapide des félins", // Guépard
-          "Le géant à la trompe", // Éléphant (réponse correcte : index 2)
-        ],
-        answerIndex: 2, 
-        hints: [
-          "Il est le plus grand mammifère terrestre.", 
-          "Sa population a chuté de 90% au XXe siècle."
-        ],
-      });
-    });
-  }
+        if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
+            // Énigme 1 non résolue : Quiz
+            currentPuzzleData = {
+                ...PUZZLE_1,
+                type: "quiz", 
+                title: "Lutte Anti-Braconnage (Niv. 1)",
+                prompt: "Le braconnage de quel 'Géant de la Savane' est principalement motivé par le commerce illégal de l'ivoire ?",
+                choices: ["Le grand mammifère à corne", "Le plus rapide des félins", "Le géant à la trompe"],
+                answerIndex: 2, 
+                scene: this.sys.settings.key,
+            };
+            buttonText = "Protection de la Faune (Niv. 1)";
+            buttonColor = 0x447a3f;
+        } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
+            // Énigme 1 résolue, Énigme 2 non résolue : DragDrop
+            currentPuzzleData = {
+                ...PUZZLE_2,
+                type: "dragdrop", 
+                title: "Répartition des Espèces (Niv. 2)",
+                prompt: "Associez chaque espèce à sa zone d'habitat idéale.",
+                items: [{ id: "rhino", label: "Rhinocéros (Herbivore)" }, { id: "guépard", label: "Guépard (Chasseur)" }],
+                targets: [{ id: "savane", label: "Savane ouverte", accept: ["guépard"] }, { id: "bush", label: "Bush dense", accept: ["rhino"] }],
+                scene: this.sys.settings.key,
+            };
+            buttonText = "Protection de la Faune (Niv. 2)";
+            buttonColor = 0x8e44ad; // Mauve
+        }
+
+        // --- RENDU PHASER ---
+        this.add.text(w / 2, 60, "Salle : Kenya", { fontSize: "28px", color: "#ffffff"}).setOrigin(0.5);
+
+        const puzzleBtn = this.add.rectangle(w / 2, h / 2, 220, 60, buttonColor).setInteractive({ useHandCursor: true });
+        this.add.text(w / 2, h / 2, buttonText, { fontSize: "18px", color: "#ffffff"}).setOrigin(0.5);
+
+        puzzleBtn.on("pointerup", () => {
+            if (currentPuzzleData) {
+                puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
+                if (badgeManager.unlockedBadges.has(currentPuzzleData.badgeId)) {
+                     this.scene.restart();
+                }
+            } else {
+                 console.log("Salle Complète !");
+            }
+        });
+    }
 }
