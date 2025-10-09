@@ -1,66 +1,119 @@
 // src/game/scenes/KenyaScene.js
 import Phaser from "phaser";
-import { puzzleManager } from "../systems/puzzleManager";
+import { puzzleManager } from "../systems/puzzleManager.js";
 import { badgeManager } from "../systems/BadgeManager"; 
 import { PROGRESSION } from "../systems/ProgressionManager";
 
 export default class KenyaScene extends Phaser.Scene {
     constructor() {
         super("KenyaScene");
+        this.handleBadgeUpdate = this.handleBadgeUpdate.bind(this);
     }
     
-    // 🚨 CORRECTION DU BUG DE DOUBLE-JEU
+    handleBadgeUpdate(badgeData) {
+        const { id: badgeId } = badgeData;
+        if (badgeId.startsWith("badge-kenya-")) {
+            this.time.delayedCall(300, () => {
+                this.children.getAll().forEach(child => {
+                    if (child instanceof Phaser.GameObjects.Rectangle || child instanceof Phaser.GameObjects.Text) {
+                         child.destroy();
+                    }
+                });
+                this.create();
+            }, [], this); 
+        }
+    }
+    
     init() {
-        this.handleProgression = (data) => {
-            if (data.scene === this.sys.settings.key) {
-                this.scene.restart();
-            }
-        };
-        badgeManager.on('progressed', this.handleProgression);
+        badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
+        badgeManager.on('badgeUnlocked', this.handleBadgeUpdate, this);
     }
     
     shutdown() {
-        badgeManager.off('progressed', this.handleProgression);
+        badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
     }
     
     create() {
         const { width: w, height: h } = this.scale;
         this.cameras.main.setBackgroundColor("#2a5934"); 
         
-        // --- LOGIQUE DE PROGRESSION ---
-        const PUZZLE_1 = PROGRESSION["kenya-faune-quiz-1"];
-        const PUZZLE_2 = PROGRESSION["kenya-dragdrop-2"];
-
         let currentPuzzleData = null;
-        let buttonText = "Salle Complète !";
+        let buttonText = "Salle Complète ! (8/8)";
         let buttonColor = 0x6a6a6a; 
+        let currentLevel = 1;
 
-        if (!badgeManager.unlockedBadges.has(PUZZLE_1.badgeId)) {
-            // Énigme 1 : Quiz
-            currentPuzzleData = {
-                ...PUZZLE_1,
-                type: "quiz", 
-                title: "Lutte Anti-Braconnage (Niv. 1)",
-                prompt: "Le braconnage de quel 'Géant de la Savane' est principalement motivé par le commerce illégal de l'ivoire ?",
-                choices: ["Le grand mammifère à corne", "Le plus rapide des félins", "Le géant à la trompe"],
-                answerIndex: 2, 
-                scene: this.sys.settings.key,
-            };
-            buttonText = "Protection de la Faune (Niv. 1)";
-            buttonColor = 0x447a3f;
-        } else if (!badgeManager.unlockedBadges.has(PUZZLE_2.badgeId)) {
-            // Énigme 2 : DragDrop
-            currentPuzzleData = {
-                ...PUZZLE_2,
-                type: "dragdrop", 
-                title: "Répartition des Espèces (Niv. 2)",
-                prompt: "Associez chaque espèce à sa zone d'habitat idéale.",
-                items: [{ id: "rhino", label: "Rhinocéros (Herbivore)" }, { id: "guépard", label: "Guépard (Chasseur)" }],
-                targets: [{ id: "savane", label: "Savane ouverte", accept: ["guépard"] }, { id: "bush", label: "Bush dense", accept: ["rhino"] }],
-                scene: this.sys.settings.key,
-            };
-            buttonText = "Protection de la Faune (Niv. 2)";
-            buttonColor = 0x8e44ad; 
+        const puzzleKeys = Object.keys(PROGRESSION).filter(key => key.startsWith("kenya-"));
+        
+        for (let i = 0; i < puzzleKeys.length; i++) {
+            const key = puzzleKeys[i];
+            const info = PROGRESSION[key];
+            if (!badgeManager.unlockedBadges.has(info.badgeId)) {
+                currentLevel = i + 1;
+                
+                switch (key) {
+                    case "kenya-quiz-1":
+                        currentPuzzleData = { ...info, type: "quiz", title: "Faune en Danger : Niveau 1", 
+                            prompt: "Quel produit du 'Géant de la Savane' est principalement motivé par le commerce illégal ?",
+                            choices: ["La peau de zèbre", "La corne de rhinocéros", "L'ivoire d'éléphant"], answerIndex: 2, 
+                            hints: ["C'est blanc et très dur.", "Il a fait l'objet d'un grand traité international."],
+                        };
+                        break;
+                    case "kenya-drag-2":
+                        currentPuzzleData = { ...info, type: "dragdrop", title: "Répartition des Espèces : Niveau 2", 
+                            prompt: "Associez les rôles d'espèce dans l'écosystème.",
+                            items: [{ id: "lion", label: "Prédateur Apex" }, { id: "herbivore", label: "Consommateur Primaire" }],
+                            targets: [{ id: "sommet", label: "Contrôle la population", accept: ["lion"] }, { id: "base", label: "Mange les plantes", accept: ["herbivore"] }],
+                        };
+                        break;
+                    case "kenya-letter-3":
+                        currentPuzzleData = { ...info, type: "letterpuzzle", title: "Maladie et Climat : Niveau 3", 
+                            prompt: "Quel type de maladie transmise par les tiques menace la faune en cas d'augmentation des températures ? (Mot en 5 lettres)",
+                            answer: "Fièvre",
+                            hints: ["Elle cause une forte température.", "Le changement climatique favorise sa propagation."],
+                        };
+                        break;
+                    case "kenya-toggle-4":
+                        currentPuzzleData = { ...info, type: "toggle", title: "Détection Thermique : Niveau 4", 
+                            prompt: "Activez les caméras thermiques (Vrai = Actif) pour surveiller la nuit.",
+                            targets: [true, false, true, true], 
+                        };
+                        break;
+                    case "kenya-quiz-5":
+                        currentPuzzleData = { ...info, type: "quiz", title: "Exploitation Durable : Niveau 5", 
+                            prompt: "Quel modèle de tourisme africain vise à minimiser l'impact environnemental tout en soutenant l'économie locale ?",
+                            choices: ["Tourisme de masse", "Écotourisme", "Agritourisme"], answerIndex: 1,
+                            hints: ["Le préfixe signifie 'environnement'.", "Il valorise la nature."],
+                        };
+                        break;
+                    case "kenya-drag-6":
+                        currentPuzzleData = { ...info, type: "dragdrop", title: "Gestion de l'Eau : Niveau 6", 
+                            prompt: "Associez la technique de conservation de l'eau à son objectif.",
+                            items: [{ id: "barrage", label: "Petits barrages" }, { id: "irrigation", label: "Irrigation goutte à goutte" }],
+                            targets: [{ id: "economie", label: "Réduire le gaspillage", accept: ["irrigation"] }, { id: "stockage", label: "Collecter l'eau de pluie", accept: ["barrage"] }],
+                        };
+                        break;
+                    case "kenya-letter-7":
+                        currentPuzzleData = { ...info, type: "letterpuzzle", title: "Éducation Rurale : Niveau 7", 
+                            prompt: "Quel mot désigne un membre d'une communauté qui protège et surveille activement la faune ? (Mot en 5 lettres)",
+                            answer: "Garde",
+                            hints: ["Il est souvent armé.", "Il travaille dans les réserves."],
+                        };
+                        break;
+                    case "kenya-toggle-8":
+                        currentPuzzleData = { ...info, type: "toggle", title: "Contrôle des Mouvements : Niveau 8", 
+                            prompt: "Désactivez les colliers GPS des animaux ayant franchi les zones réglementées (Faux = Actif).",
+                            targets: [false, true, false, false], 
+                        };
+                        break;
+                }
+
+                currentPuzzleData.scene = this.sys.settings.key;
+                currentPuzzleData.badgeId = info.badgeId;
+                currentPuzzleData.id = key;
+                buttonText = `Protection de la Faune (Niv. ${currentLevel}/8)`;
+                buttonColor = 0x447a3f;
+                break;
+            }
         }
 
         // --- RENDU PHASER ---

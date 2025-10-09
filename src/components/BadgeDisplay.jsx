@@ -32,7 +32,6 @@ const notificationStyle = {
     transition: 'opacity 0.5s ease-in-out',
 };
 
-
 const BadgeDisplay = () => {
   const [badges, setBadges] = useState(badgeManager.getBadges());
   const [newBadge, setNewBadge] = useState(null);
@@ -67,7 +66,7 @@ const BadgeDisplay = () => {
           borderRadius: 8, padding: '5px', boxShadow: '0 0 10px rgba(0,0,0,0.5)',
       }}>
         <div style={{ borderBottom: '1px solid #1e6f5c', paddingBottom: 5, marginBottom: 5 }}>
-          PROGRESSION ({badges.length} / 8) :
+          PROGRESSION TOTALE ({badges.length} / 8) :
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
           {badges.map(id => (

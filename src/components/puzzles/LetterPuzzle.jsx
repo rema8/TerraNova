@@ -1,64 +1,50 @@
-// src/components/puzzles/QuizPuzzle.jsx
+// src/components/puzzles/LetterPuzzle.jsx
 import React, { useState } from 'react';
 
-export default function QuizPuzzle({ data, onSolve }) {
-    const [selectedChoice, setSelectedChoice] = useState(null);
-    const [showHint, setShowHint] = useState(false);
+export default function LetterPuzzle({ data, onSolve }) {
+    const [inputValue, setInputValue] = useState('');
     const [message, setMessage] = useState('');
-    const [isSolved, setIsSolved] = useState(false);
+    const [showHint, setShowHint] = useState(false);
 
     const handleSubmit = () => {
-        if (selectedChoice === null) {
-            setMessage("Veuillez sélectionner une réponse.");
-            return;
-        }
+        // Normalisation de la réponse (sans espace et en minuscules)
+        const normalizedInput = inputValue.trim().toLowerCase();
+        const normalizedAnswer = data.answer.trim().toLowerCase();
 
-        const success = selectedChoice === data.answerIndex;
-
-        if (success) {
-            setMessage("✅ Réponse correcte ! Badge débloqué.");
-            setIsSolved(true);
-            // 🚨 Déclenchement de la fermeture et du déblocage du badge après un court délai
-            setTimeout(() => onSolve({ success: true }), 1000); 
+        if (normalizedInput === normalizedAnswer) {
+            setMessage("✅ Correct ! Badge débloqué.");
+            // Délai pour permettre à l'utilisateur de lire le succès avant de fermer la modale
+            setTimeout(() => onSolve({ success: true }), 1000);
         } else {
-            setMessage("❌ Réponse incorrecte. Veuillez essayer à nouveau.");
-            setSelectedChoice(null); // Force la resélection
+            setMessage("❌ Incorrect. Veuillez essayer à nouveau.");
         }
-    };
-
-    const handleRetry = () => {
-        setMessage('');
-        setSelectedChoice(null);
-        setShowHint(false);
     };
     
-    const choiceStyle = (index) => ({
-        padding: '10px 15px',
-        margin: '5px 0',
-        borderRadius: 8,
-        cursor: 'pointer',
-        textAlign: 'left',
-        background: selectedChoice === index ? '#2980b9' : '#1e6f5c',
-        border: '1px solid #000',
-        opacity: isSolved ? 0.6 : 1,
-    });
+    const handleRetry = () => {
+        setMessage('');
+        setInputValue('');
+        setShowHint(false); // Réinitialise aussi l'indice
+    };
+
+    const isSolved = message.startsWith('✅');
 
     return (
         <div style={{ padding: '10px' }}>
-            <p style={{ marginBottom: '20px', fontSize: '1.1em' }}>{data.prompt}</p>
+            <p style={{ marginBottom: '15px', fontSize: '1.1em' }}>{data.prompt}</p>
 
-            {/* CHOIX DE RÉPONSE */}
-            <div style={{ pointerEvents: isSolved ? 'none' : 'auto' }}>
-                {data.choices.map((choice, index) => (
-                    <div
-                        key={index}
-                        style={choiceStyle(index)}
-                        onClick={() => setSelectedChoice(index)}
-                    >
-                        {choice}
-                    </div>
-                ))}
-            </div>
+            {/* Champ de saisie */}
+            <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Entrez le mot manquant"
+                disabled={isSolved}
+                style={{
+                    padding: '10px', width: '80%', margin: '10px 0',
+                    borderRadius: 4, border: '1px solid #ccc',
+                    textAlign: 'center', fontSize: '1em',
+                }}
+            />
 
             <div style={{ marginTop: '20px' }}>
                 <button 
@@ -93,7 +79,7 @@ export default function QuizPuzzle({ data, onSolve }) {
                 </p>
             )}
 
-            {/* --- SECTION INDICES --- */}
+            {/* --- SECTION INDICES (comme dans QuizPuzzle) --- */}
             {data.hints && data.hints.length > 0 && !isSolved && (
                 <div style={{ marginTop: '25px', borderTop: '1px solid #333', paddingTop: '10px' }}>
                     

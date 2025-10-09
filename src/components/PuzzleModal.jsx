@@ -4,11 +4,10 @@ import DragDropPuzzle from "./puzzles/DragDropPuzzle";
 import React, { useEffect, useState } from "react";
 import { puzzleManager } from "../game/systems/puzzleManager";
 import TogglePuzzle from "./puzzles/TogglePuzzle";
-
 import QuizPuzzle from "./puzzles/QuizPuzzle"; 
+// 🚨 NOUVEL IMPORT
+import LetterPuzzle from "./puzzles/LetterPuzzle";
 import { badgeManager } from "../game/systems/BadgeManager"; 
-
-import { progressionManager } from "../game/systems/ProgressionManager";
 
 export default function PuzzleModal() {
   const [puzzle, setPuzzle] = useState(null);
@@ -27,25 +26,17 @@ export default function PuzzleModal() {
 
   if (!puzzle) return null;
 
+  // 🚨 NOTA BENE: onSolve est géré dans chaque puzzle, 
+  // on appelle onSolve({ success: true }) pour débloquer le badge et fermer la modale.
   const handleSolve = (result) => {
     if (result.success) {
-      const { id: puzzleId, badgeId, scene } = puzzle.data;
+      const { id: puzzleId, badgeId } = puzzle.data;
       
+      // La résolution du puzzle est gérée par le composant de puzzle lui-même (ex: QuizPuzzle)
+      // On s'assure que le badge est débloqué ici avant de fermer.
       badgeManager.solvePuzzle(puzzleId, badgeId);
       
       puzzleManager.closePuzzle();
-      
-      // 🚨 MISE À JOUR : Relance la scène après succès pour mettre à jour l'état du bouton
-      if (scene && progressionManager.PROGRESSION[puzzleId]) {
-          // Utiliser Phaser.Scenes.SceneManager pour relancer la scène
-          // Vous devrez importer ou injecter le SceneManager si non disponible ici
-          // Si vous ne pouvez pas accéder à Phaser ici, vous devrez implémenter un événement de 'reloadScene'
-          // TEMPORAIREMENT, on peut vous demander de relancer le jeu si nécessaire, mais en Phaser cela fonctionne via:
-          // this.game.scene.getScene(scene).scene.restart();
-          console.log(`[PuzzleModal] Redémarrage de la scène ${scene} pour mettre à jour l'interface.`);
-          // Si vous avez un Game Manager centralisé, le redémarrage doit y être géré.
-          // Pour l'instant, on se contente du log et du déblocage du badge.
-      }
     }
   };
 
@@ -63,7 +54,7 @@ export default function PuzzleModal() {
         }}
       >
         <h3>{puzzle.data.title}</h3>
-        {/* Le type d'énigme doit correspondre au composant */}
+        
         {puzzle.data.type === "quiz" && (
           <QuizPuzzle data={puzzle.data} onSolve={handleSolve} />
         )}
@@ -73,7 +64,12 @@ export default function PuzzleModal() {
         {puzzle.data.type === "toggle" && (
           <TogglePuzzle data={puzzle.data} onSolve={handleSolve} />
         )}
+        {/* 🚨 NOUVEAU TYPE DE PUZZLE */}
+        {puzzle.data.type === "letterpuzzle" && (
+          <LetterPuzzle data={puzzle.data} onSolve={handleSolve} />
+        )}
 
+        {/* Le bouton Fermer est gardé en dehors du composant spécifique pour l'uniformité */}
         <button
           onClick={() => puzzleManager.closePuzzle()}
           style={{
