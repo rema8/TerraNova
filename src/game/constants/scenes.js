@@ -3,5 +3,8 @@ export const SCENES = {
   PRELOAD: "PreloadScene",
   HUB: "HubScene",
   VENICE: "VeniceScene",
+  MAROC: "MarocScene",
+  KENYA: "KenyaScene",
+  AMAZONIE: "AmazonieScene",
   UI: "UIOverlayScene",
 };

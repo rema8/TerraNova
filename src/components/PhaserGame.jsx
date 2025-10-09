@@ -6,6 +6,9 @@ import BootScene from '../game/scenes/BootScene.js'
 import PreloadScene from '../game/scenes/PreloadScene.js'
 import HubScene from '../game/scenes/HubScene.js'
 import VeniceScene from '../game/scenes/VeniceScene.js'
+import MarocScene from '../game/scenes/MarocScene.js' 
+import KenyaScene from '../game/scenes/KenyaScene.js'
+import AmazonieScene from '../game/scenes/AmazonieScene.js' 
 import UIOverlayScene from '../game/scenes/UIOverlayScene.js'
 
 export default function PhaserGame() {
@@ -16,7 +19,7 @@ export default function PhaserGame() {
     const config = {
       ...gameConfig,
       parent: containerRef.current,
-      scene: [BootScene, PreloadScene, HubScene, VeniceScene, UIOverlayScene],
+      scene: [BootScene, PreloadScene, HubScene, VeniceScene, UIOverlayScene, MarocScene,KenyaScene,AmazonieScene],
     }
     gameRef.current = new Phaser.Game(config)
 
