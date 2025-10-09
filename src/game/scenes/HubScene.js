@@ -1,7 +1,7 @@
 // src/game/scenes/HubScene.js
 import Phaser from 'phaser'
-import { SCENES } from '../constants/scenes.js'
-import { gameState } from '../systems/gameState.js' 
+import { SCENES } from '../constants/scenes'
+import { gameState } from '../systems/gameState' 
 
 export default class HubScene extends Phaser.Scene {
   constructor() { 
@@ -10,6 +10,12 @@ export default class HubScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale
+    this.socket = this.game.socket; // Accès au socket
+    this.username = this.game.username; // Accès au pseudo
+    
+    if (this.socket) {
+        this.socket.emit('player_join', { name: this.username });
+    }
 
     // Fond
     this.cameras.main.setBackgroundColor('#081210')
