@@ -1,3 +1,5 @@
+// src/game/scenes/AmazonieScene.js
+
 import Phaser from "phaser";
 import { SCENES } from "../constants/scenes.js";
 import { puzzleManager } from "../systems/puzzleManager.js";
@@ -23,20 +25,22 @@ export default class AmazonieScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     puzzleBtn.on("pointerup", () => {
-      // AJOUT DES DONNÉES DE L'ÉNIGME
       puzzleManager.openPuzzle("amazonie-forest", {
         id: "amazonie-forest",
-        type: "dragdrop", // Par exemple, utilisez "dragdrop"
-        title: "Reboisement",
-        prompt: "Associez les arbres natifs (A, B) à leurs sols (1, 2).",
-        // Les données ci-dessous sont spécifiques au type "dragdrop" :
+        type: "dragdrop", 
+        title: "Reboisement Anti-Érosion",
+        // NOUVEAU PROMPT : Met l'accent sur la fonction des plantes, et non leur nom
+        prompt: "GLISSEZ chaque plant vers la zone qui a le plus besoin de sa capacité de fixation pour lutter contre l'érosion.",
         items: [
-            { id: "arbreA", label: "Arbre A" },
-            { id: "arbreB", label: "Arbre B" },
+            // Le joueur doit déduire : qui fixe le mieux le sol ?
+            { id: "planteRizhome", label: "Plante à rhizomes (Racines traçantes)" }, 
+            { id: "plantePivot", label: "Plante à racines pivots (Verticales)" }, 
         ],
         targets: [
-            { id: "sol1", label: "Sol 1", accept: ["arbreB"] },
-            { id: "sol2", label: "Sol 2", accept: ["arbreA"] },
+            // Le sol fragile est plus sensible au glissement (d'où l'importance des racines traçantes)
+            { id: "sol1", label: "Sol N°1 (Zone de ravinement)", accept: ["planteRizhome"] }, 
+            // Le sol stable a besoin de profondeur pour l'ancrage
+            { id: "sol2", label: "Sol N°2 (Zone stable profonde)", accept: ["plantePivot"] }, 
         ],
       });
     });

@@ -3,6 +3,8 @@ import DragDropPuzzle from "./puzzles/DragDropPuzzle";
 import React, { useEffect, useState } from "react";
 import { puzzleManager } from "../game/systems/puzzleManager";
 import TogglePuzzle from "./puzzles/TogglePuzzle";
+// AJOUTER L'IMPORT POUR LE QUIZ
+import QuizPuzzle from "./puzzles/QuizPuzzles"; 
 
 export default function PuzzleModal() {
   const [puzzle, setPuzzle] = useState(null);
@@ -51,7 +53,10 @@ export default function PuzzleModal() {
         }}
       >
         <h3>{puzzle.data.title}</h3>
-        {/* AJOUT DE LA GESTION POUR LE TYPE "dragdrop" */}
+        {/* NOUVELLE CONDITION POUR AFFICHER LE QUIZ */}
+        {puzzle.data.type === "quiz" && (
+          <QuizPuzzle data={puzzle.data} onSolve={handleSolve} />
+        )}
         {puzzle.data.type === "dragdrop" && (
           <DragDropPuzzle data={puzzle.data} onSolve={handleSolve} />
         )}

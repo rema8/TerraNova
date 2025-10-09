@@ -59,13 +59,22 @@ export default class VeniceScene extends Phaser.Scene {
 
     // --- CLIQUE ---
     btn.on("pointerdown", () => {
-      puzzleManager.openPuzzle("venice-toggle-1", {
-        id: "venice-toggle-1",
-        type: "toggle",
-        title: "Console d’inondation",
-        prompt:
-          "Active les bons leviers pour stabiliser le niveau d’eau de la lagune.",
-        pattern: [1, 0, 1, 1, 0, 1],
+      puzzleManager.openPuzzle("venice-quiz-1", { 
+        id: "venice-quiz-1",
+        type: "quiz", 
+        title: "Gestion des Eaux",
+        // Prompt générique
+        prompt: "Quel vent de Méditerranée, soufflant du Sud-Est, est le principal facteur de l'Acqua Alta ?",
+        choices: [
+          "Scirocco", // Réponse correcte : index 0
+          "Tramontane",
+          "Bora",
+        ],
+        answerIndex: 0,
+        hints: [
+          "C'est un vent chaud et humide.",
+          "Son nom dérive de l'arabe et signifie «oriental»."
+        ],
       });
     });
   }

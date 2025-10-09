@@ -1,3 +1,5 @@
+// src/game/scenes/KenyaScene.js
+
 import Phaser from "phaser";
 import { SCENES } from "../constants/scenes.js";
 import { puzzleManager } from "../systems/puzzleManager.js";
@@ -23,19 +25,21 @@ export default class KenyaScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     puzzleBtn.on("pointerup", () => {
-      // AJOUT DES DONNÉES DE L'ÉNIGME
-      puzzleManager.openPuzzle("kenya-faune", {
-        id: "kenya-faune",
-        type: "toggle", // Par exemple, utilisez "toggle" ou "dragdrop"
-        title: "Pistes de Patrouille",
-        prompt: "Allumez les balises qui correspondent aux zones protégées (1 et 3).",
-        // Les données ci-dessous sont spécifiques au type "toggle" :
-        toggles: [
-          { id: "balise1", label: "Zone Nord" },
-          { id: "balise2", label: "Zone Ouest" },
-          { id: "balise3", label: "Zone Est" },
+      puzzleManager.openPuzzle("kenya-faune-quiz", {
+        id: "kenya-faune-quiz",
+        type: "quiz", 
+        title: "Lutte Anti-Braconnage",
+        prompt: "Le braconnage de quel 'Géant de la Savane' est principalement motivé par le commerce illégal de l'ivoire ?",
+        choices: [
+          "Le grand mammifère à corne", // Rhinocéros
+          "Le plus rapide des félins", // Guépard
+          "Le géant à la trompe", // Éléphant (réponse correcte : index 2)
         ],
-        solution: ["balise1", "balise3"],
+        answerIndex: 2, 
+        hints: [
+          "Il est le plus grand mammifère terrestre.", 
+          "Sa population a chuté de 90% au XXe siècle."
+        ],
       });
     });
   }
