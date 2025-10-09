@@ -1,8 +1,7 @@
-
 export const SCENES = {
-  BOOT: 'BOOT',
-  PRELOAD: 'PRELOAD',
-  HUB: 'HUB',
-  VENICE: 'VENICE',
-  UI: 'UI',
-}
+  BOOT: "BootScene",
+  PRELOAD: "PreloadScene",
+  HUB: "HubScene",
+  VENICE: "VeniceScene",
+  UI: "UIOverlayScene",
+};

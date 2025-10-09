@@ -1,0 +1,10 @@
+{
+  "id": "maroc-quiz-1",
+  "type": "quiz",
+  "title": "Solaire — Maroc",
+  "prompt": "Quelle région du Maroc est la plus adaptée aux fermes solaires à grande échelle ?",
+  "choices": ["Les plaines côtières", "Le désert du sud", "Les montagnes"],
+  "answerIndex": 1,
+  "hints": ["Pense aux zones très ensoleillées avec peu de nuages."],
+  "reward": { "type": "badge", "id": "badge_maroc" }
+}

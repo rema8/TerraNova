@@ -1,0 +1,16 @@
+{
+  "id": "kenya-dnd-1",
+  "type": "dragdrop",
+  "title": "Associer espèces et habitat — Kenya",
+  "prompt": "Associe chaque animal à son habitat naturel.",
+  "items": [
+    { "id": "elephant", "label": "Éléphant" },
+    { "id": "flamingo", "label": "Flamant" },
+    { "id": "cheetah", "label": "Guépard" }
+  ],
+  "targets": [
+    { "id": "savanna", "label": "Savane", "accept": ["elephant","cheetah"] },
+    { "id": "lakes", "label": "Lacs salés", "accept": ["flamingo"] }
+  ],
+  "reward": { "type": "badge", "id": "badge_kenya" }
+}

@@ -1,0 +1,15 @@
+{
+  "title": "Quiz Venise 2045",
+  "questions": [
+    {
+      "text": "Quel est le principal risque climatique à Venise en 2045 ?",
+      "options": ["La sécheresse", "Les inondations", "Les incendies"],
+      "answer": 1
+    },
+    {
+      "text": "Quelle technologie est utilisée pour protéger la ville ?",
+      "options": ["Des digues mobiles", "Des drones", "Des filets flottants"],
+      "answer": 0
+    }
+  ]
+}
