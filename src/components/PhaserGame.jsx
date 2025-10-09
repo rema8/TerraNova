@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef } from 'react'
 import Phaser from 'phaser'
 import { gameConfig } from '../game/config/gameConfig.js'
@@ -19,8 +18,18 @@ export default function PhaserGame() {
     const config = {
       ...gameConfig,
       parent: containerRef.current,
-      scene: [BootScene, PreloadScene, HubScene, VeniceScene, UIOverlayScene, MarocScene,KenyaScene,AmazonieScene],
+      scene: [
+        BootScene, 
+        PreloadScene, 
+        HubScene, 
+        VeniceScene, 
+        UIOverlayScene, 
+        MarocScene,
+        KenyaScene,
+        AmazonieScene
+      ],
     }
+
     gameRef.current = new Phaser.Game(config)
 
     return () => {
@@ -32,6 +41,27 @@ export default function PhaserGame() {
   }, [])
 
   return (
-    <div ref={containerRef} style={{ width: gameConfig.width, height: gameConfig.height, border: '1px solid #e5e5e5', borderRadius: 12, overflow: 'hidden' }} />
+    <div 
+      style={{
+        width: "100vw",
+        height: "100vh",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        background: "linear-gradient(180deg, #001a14 0%, #003d30 100%)"
+      }}
+    >
+      <div 
+        ref={containerRef} 
+        style={{ 
+          width: gameConfig.width, 
+          height: gameConfig.height, 
+          border: "2px solid #1e6f5c", 
+          borderRadius: "12px", 
+          boxShadow: "0 0 20px #00ffcc55",
+          overflow: "hidden"
+        }} 
+      />
+    </div>
   )
 }
