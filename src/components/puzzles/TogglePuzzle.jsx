@@ -1,8 +1,15 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function TogglePuzzle({ data, onSolve }) {
-  const [state, setState] = useState([0, 0, 0, 0, 0, 0]);
+  const [state, setState] = useState([]);
   const [msg, setMsg] = useState("");
+
+  // 🔹 Initialise dynamiquement le nombre de cases selon data.targets
+  useEffect(() => {
+    if (data.targets) {
+      setState(Array(data.targets.length).fill(0));
+    }
+  }, [data]);
 
   const toggle = (i) => {
     const copy = [...state];
@@ -11,11 +18,13 @@ export default function TogglePuzzle({ data, onSolve }) {
   };
 
   const check = () => {
-    if (JSON.stringify(state) === JSON.stringify(data.pattern)) {
-      setMsg("Système stabilisé !");
+    // 🔹 Convertit les booléens de data.targets en 0/1 pour comparaison
+    const solution = data.targets.map((v) => (v ? 1 : 0));
+    if (JSON.stringify(state) === JSON.stringify(solution)) {
+      setMsg("✅ Système stabilisé !");
       setTimeout(() => onSolve({ success: true }), 500);
     } else {
-      setMsg("Mauvaise combinaison !");
+      setMsg("❌ Mauvaise combinaison !");
     }
   };
 

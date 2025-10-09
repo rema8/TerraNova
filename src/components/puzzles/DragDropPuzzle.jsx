@@ -38,7 +38,7 @@ export default function DragDropPuzzle({ data, onSolve }) {
       setMsg("🎉 Bien joué !");
       setTimeout(() => onSolve({ success: true }), 300);
     } else {
-      setMsg("❌ Pas encore correct.");
+      setMsg("Pas encore correct.");
     }
   };
 

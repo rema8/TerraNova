@@ -78,19 +78,19 @@ export default class AmazonieScene extends Phaser.Scene {
                 currentLevel = i + 1;
                 
                 switch (key) {
-                    case "amazonie-drag-1":
+                    /*case "amazonie-drag-1":
                         currentPuzzleData = { ...info, type: "dragdrop", title: "Reboisement Anti-Érosion : Niveau 1",
                             prompt: "GLISSEZ chaque plant vers la zone qui a le plus besoin de sa capacité de fixation pour lutter contre l'érosion.",
                             items: [{ id: "rizhome", label: "Plante à rhizomes" }, { id: "pivot", label: "Plante à racines pivots" }],
                             targets: [{ id: "ravinement", label: "Zone de Ravinement (Horizontal)", accept: ["rizhome"] }, { id: "profondeur", label: "Zone Stable Profonde (Vertical)", accept: ["pivot"] }],
                         };
-                        break;
-                    case "amazonie-toggle-2":
+                        break;*/
+                    /*case "amazonie-toggle-2":
                         currentPuzzleData = { ...info, type: "toggle", title: "Contrôle d'Humidité : Niveau 2", 
                             prompt: "Activez les zones où l'humidité est critique (Vrai = Critique).",
                             targets: [false, true, true, false, true], 
                         };
-                        break;
+                        break;*/
                     case "amazonie-quiz-3":
                         currentPuzzleData = { ...info, type: "quiz", title: "Cycle de l'Eau : Niveau 3", 
                             prompt: "Quel processus vital la forêt amazonienne régule-t-elle, créant ses propres précipitations ?",
@@ -112,12 +112,12 @@ export default class AmazonieScene extends Phaser.Scene {
                             targets: [{ id: "surface", label: "Couche de surface", accept: ["humus"] }, { id: "soussol", label: "Sous-sol profond", accept: ["racine"] }],
                         };
                         break;
-                    case "amazonie-toggle-6":
+                    /*case "amazonie-toggle-6":
                         currentPuzzleData = { ...info, type: "toggle", title: "Surveillance Incendies : Niveau 6",
                             prompt: "Désactivez les alarmes des zones où la température est normale (Faux = Normal).",
                             targets: [true, false, false, true], 
                         };
-                        break;
+                        break;*/
                     case "amazonie-quiz-7":
                         currentPuzzleData = { ...info, type: "quiz", title: "Biodiversité Clé : Niveau 7", 
                             prompt: "Quel groupe d'animaux est le plus impacté par la fragmentation de l'habitat, car il dépend des canopées continues ?",
