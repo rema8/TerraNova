@@ -1,4 +1,5 @@
 // src/components/PuzzleModal.jsx
+import DragDropPuzzle from "./puzzles/DragDropPuzzle";
 import React, { useEffect, useState } from "react";
 import { puzzleManager } from "../game/systems/puzzleManager";
 import TogglePuzzle from "./puzzles/TogglePuzzle";
@@ -11,6 +12,7 @@ export default function PuzzleModal() {
     const close = () => setPuzzle(null);
     puzzleManager.on("open", open);
     puzzleManager.on("close", close);
+
     return () => {
       puzzleManager.off("open", open);
       puzzleManager.off("close", close);
@@ -49,9 +51,14 @@ export default function PuzzleModal() {
         }}
       >
         <h3>{puzzle.data.title}</h3>
+        {/* AJOUT DE LA GESTION POUR LE TYPE "dragdrop" */}
+        {puzzle.data.type === "dragdrop" && (
+          <DragDropPuzzle data={puzzle.data} onSolve={handleSolve} />
+        )}
         {puzzle.data.type === "toggle" && (
           <TogglePuzzle data={puzzle.data} onSolve={handleSolve} />
         )}
+
         <button
           onClick={() => puzzleManager.closePuzzle()}
           style={{

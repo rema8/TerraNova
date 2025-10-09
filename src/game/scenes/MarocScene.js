@@ -9,7 +9,6 @@ export default class MarocScene extends Phaser.Scene {
 
   create() {
     const { width, height } = this.scale;
-
     this.cameras.main.setBackgroundColor("#3d2b1f");
 
     this.add
@@ -22,6 +21,7 @@ export default class MarocScene extends Phaser.Scene {
     const btn = this.add
       .rectangle(width / 2, height / 2, 250, 70, 0xe6a157)
       .setInteractive({ useHandCursor: true });
+
     this.add
       .text(width / 2, height / 2, "Régler les miroirs solaires", {
         fontSize: "18px",
@@ -32,10 +32,10 @@ export default class MarocScene extends Phaser.Scene {
     btn.on("pointerdown", () => {
       puzzleManager.openPuzzle("maroc-dragdrop-1", {
         id: "maroc-dragdrop-1",
-        type: "dragdrop",
+        // LE TYPE "dragdrop" EST CORRECT ICI
+        type: "dragdrop", 
         title: "Alignement solaire",
-        prompt:
-          "Associe chaque miroir à la bonne position pour maximiser la lumière reçue.",
+        prompt: "Associe chaque miroir à la bonne position pour maximiser la lumière reçue.",
         items: [
           { id: "nord", label: "Nord" },
           { id: "sud", label: "Sud" },
