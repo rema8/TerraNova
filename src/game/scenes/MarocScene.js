@@ -150,14 +150,45 @@ export default class MarocScene extends Phaser.Scene {
         this.add.text(w / 2, h / 2, buttonText, { fontSize: "18px", color: "#fff"}).setOrigin(0.5);
 
         btn.on("pointerdown", () => {
-            if (currentPuzzleData) {
-                puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-            } else {
-                 console.log("Salle Complète !");
-            }
-        });
+        if (currentPuzzleData) {
+          puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
+        } else {
+        // 🎉 Salle terminée
+        this.children.removeAll();
+        this.add.text(w / 2, h / 2 - 80, "🎉 Félicitations !", {
+            fontFamily: "Arial",
+            fontSize: "28px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
 
-        // 🚨 CRÉATION DU BOUTON DE RETOUR
+        this.add.text(w / 2, h / 2 - 20, "Tu as terminé la salle du Maroc !", {
+            fontFamily: "Arial",
+            fontSize: "20px",
+            color: "#c7ffd9",
+        }).setOrigin(0.5);
+
+        this.add.text(w / 2, h / 2 + 40, "Retourne au hub pour en choisir une autre 🌍", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#9fe3c6",
+        }).setOrigin(0.5);
+
+        const backBtn = this.add.rectangle(w / 2, h / 2 + 120, 180, 50, 0x1e6f5c)
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff);
+        this.add.text(w / 2, h / 2 + 120, "↩ Retour au hub", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#ffffff",
+        }).setOrigin(0.5);
+
+        backBtn.on("pointerdown", () => this.scene.start(SCENES.HUB));
+      }
+    });
+
+
+        // CRÉATION DU BOUTON DE RETOUR
         this.createBackButton(w, h);
-    }
+    }
 }
