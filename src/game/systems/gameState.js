@@ -12,7 +12,7 @@ class GameState {
       veniceGateOpened: false,
       venicePuzzleSolved: false,
     }
-    this.timeRemaining = 15 * 60 // 15 minutes (optionnel)
+    this.timeRemaining = 30 * 60 
   }
 
   addItem(item) { this.inventory.add(item) }

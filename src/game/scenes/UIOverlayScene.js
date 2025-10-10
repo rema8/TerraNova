@@ -13,7 +13,7 @@ export default class UIOverlayScene extends Phaser.Scene {
     this.add.rectangle(0, 0, width, 40, 0x052c24).setOrigin(0,0).setAlpha(0.9)
 
     // Timer à gauche
-    this.timerText = this.add.text(12, 10, 'Temps: 15:00', { 
+    this.timerText = this.add.text(12, 10, 'Temps: 30:00', { 
       fontSize: '16px', 
       color: '#b6ffe2' 
     })

@@ -81,7 +81,7 @@ export default class MarocScene extends Phaser.Scene {
                     case "maroc-drag-1":
                         currentPuzzleData = { ...info, type: "dragdrop", title: "Optimisation Solaire : Niveau 1",
                             prompt: "GLISSEZ chaque panneau de direction vers la zone horaire où il est le plus efficace (SUD est le plus efficace).",
-                            items: [{ id: "nord", label: "Nord (faible)" }, { id: "sud", label: "Sud (fort)" }],
+                            items: [{ id: "nord", label: "Nord" }, { id: "sud", label: "Sud" }],
                             targets: [{ id: "faible", label: "Zone faible", accept: ["nord"] }, { id: "forte", label: "Zone forte", accept: ["sud"] }],
                         };
                         break;
