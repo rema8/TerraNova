@@ -34,33 +34,33 @@ export default class KenyaScene extends Phaser.Scene {
         badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
     }
 
-   
-    createBackButton(w, h) {
-        const backButton = this.add
-            .rectangle(w - 70, 40, 120, 50, 0x5a5a5a) // Position en haut à droite
-            .setInteractive({ useHandCursor: true })
-            .setStrokeStyle(2, 0xffffff)
-            .setAlpha(0.8);
+   
+    createBackButton(w, h) {
+        const backButton = this.add
+            .rectangle(w - 70, 40, 120, 50, 0x5a5a5a) // Position en haut à droite
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff)
+            .setAlpha(0.8);
 
-        this.add
-            .text(w - 70, 40, "ACCUEIL", {
-                fontFamily: "Arial", 
-                fontSize: "16px", 
-                color: "#ffffff",
-                fontWeight: "bold"
-            })
-            .setOrigin(0.5);
+        this.add
+            .text(w - 70, 40, "ACCUEIL", {
+                fontFamily: "Arial", 
+                fontSize: "16px", 
+                color: "#ffffff",
+                fontWeight: "bold"
+            })
+            .setOrigin(0.5);
 
-        // Action de retour : Arrête la scène actuelle et démarre le Hub
-        backButton.on("pointerdown", () => {
-            this.scene.stop(this.sys.settings.key);
-            this.scene.start(SCENES.HUB); // Utilisation de SCENES.HUB
-        });
-        
-        // Effet visuel au survol
-        backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
-        backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
-    }
+        // Action de retour : Arrête la scène actuelle et démarre le Hub (déjà correct)
+        backButton.on("pointerdown", () => {
+            this.scene.stop(this.sys.settings.key);
+            this.scene.start(SCENES.HUB); // Utilisation de SCENES.HUB
+        });
+        
+        // Effet visuel au survol
+        backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
+        backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
+    }
     
     create() {
         const { width: w, height: h } = this.scale;
@@ -97,7 +97,7 @@ export default class KenyaScene extends Phaser.Scene {
                     case "kenya-letter-3":
                         currentPuzzleData = { ...info, type: "letterpuzzle", title: "Maladie et Climat : Niveau 3", 
                             prompt: "Quel type de maladie transmise par les tiques menace la faune en cas d'augmentation des températures ? (Mot en 5 lettres)",
-                            answer: "Garde", // Correction: Fievre est en 5 lettres. 
+                            answer: "Fievre", // Correction du mot pour 5 lettres si nécessaire, sinon 'Garde' est un choix étrange pour une maladie
                             hints: ["Elle cause une forte température.", "Le changement climatique favorise sa propagation."],
                         };
                         break;
@@ -151,46 +151,52 @@ export default class KenyaScene extends Phaser.Scene {
         const puzzleBtn = this.add.rectangle(w / 2, h / 2, 220, 60, buttonColor).setInteractive({ useHandCursor: true });
         this.add.text(w / 2, h / 2, buttonText, { fontSize: "18px", color: "#ffffff"}).setOrigin(0.5);
 
-        btn.on("pointerdown", () => {
-        if (currentPuzzleData) {
-          puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-        } else {
-        // 🎉 Salle terminée
-        this.children.removeAll();
-        this.add.text(w / 2, h / 2 - 80, "🎉 Félicitations !", {
-            fontFamily: "Arial",
-            fontSize: "28px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }).setOrigin(0.5);
+        // NOTE: L'écouteur du bouton principal devrait être sur `puzzleBtn`, mais vous utilisez `btn` (variable non définie précédemment).
+        // Je suppose que `puzzleBtn` est le bon, mais je respecte la variable utilisée dans le code fourni pour la partie `else`.
+        puzzleBtn.on("pointerdown", () => { // J'utilise puzzleBtn ici
+        if (currentPuzzleData) {
+          puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
+        } else {
+        // 🎉 Salle terminée
+        this.children.removeAll();
+        this.add.text(w / 2, h / 2 - 80, "🎉 Félicitations !", {
+            fontFamily: "Arial",
+            fontSize: "28px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
 
-        this.add.text(w / 2, h / 2 - 20, "Tu as terminé la salle du Kenya !", {
-            fontFamily: "Arial",
-            fontSize: "20px",
-            color: "#c7ffd9",
-        }).setOrigin(0.5);
+        this.add.text(w / 2, h / 2 - 20, "Tu as terminé la salle du Kenya !", {
+            fontFamily: "Arial",
+            fontSize: "20px",
+            color: "#c7ffd9",
+        }).setOrigin(0.5);
 
-        this.add.text(w / 2, h / 2 + 40, "Retourne au hub pour en choisir une autre 🌍", {
-            fontFamily: "Arial",
-            fontSize: "16px",
-            color: "#9fe3c6",
-        }).setOrigin(0.5);
+        this.add.text(w / 2, h / 2 + 40, "Retourne au hub pour en choisir une autre 🌍", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#9fe3c6",
+        }).setOrigin(0.5);
 
-        const backBtn = this.add.rectangle(w / 2, h / 2 + 120, 180, 50, 0x1e6f5c)
-            .setInteractive({ useHandCursor: true })
-            .setStrokeStyle(2, 0xffffff);
-        this.add.text(w / 2, h / 2 + 120, "↩ Retour au hub", {
-            fontFamily: "Arial",
-            fontSize: "16px",
-            color: "#ffffff",
-        }).setOrigin(0.5);
+        const backBtn = this.add.rectangle(w / 2, h / 2 + 120, 180, 50, 0x1e6f5c)
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff);
+        this.add.text(w / 2, h / 2 + 120, "↩ Retour au hub", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#ffffff",
+        }).setOrigin(0.5);
 
-        backBtn.on("pointerdown", () => this.scene.start(SCENES.HUB));
-      }
-    });
+        // 🚨 CORRECTION MAJEURE ICI : Passage à pointerup et ajout de this.scene.stop
+        backBtn.on("pointerup", () => {
+            this.scene.stop(this.sys.settings.key);
+            this.scene.start(SCENES.HUB);
+        });
+      }
+    });
 
 
-        // CRÉATION DU BOUTON DE RETOUR
-        this.createBackButton(w, h);
-    }
+        // CRÉATION DU BOUTON DE RETOUR
+        this.createBackButton(w, h);
+    }
 }

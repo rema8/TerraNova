@@ -34,31 +34,31 @@ export default class MarocScene extends Phaser.Scene {
         badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
     }
 
-    // 🚨 MÉTHODE AJOUTÉE : Bouton de retour vers le Hub
-    createBackButton(w, h) {
-        const backButton = this.add
-            .rectangle(w - 70, 40, 120, 50, 0x5a5a5a) 
-            .setInteractive({ useHandCursor: true })
-            .setStrokeStyle(2, 0xffffff)
-            .setAlpha(0.8);
+    // 🚨 MÉTHODE AJOUTÉE : Bouton de retour vers le Hub (déjà correct)
+    createBackButton(w, h) {
+        const backButton = this.add
+            .rectangle(w - 70, 40, 120, 50, 0x5a5a5a) 
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff)
+            .setAlpha(0.8);
 
-        this.add
-            .text(w - 70, 40, "ACCUEIL", {
-                fontFamily: "Arial", 
-                fontSize: "16px", 
-                color: "#ffffff",
-                fontWeight: "bold"
-            })
-            .setOrigin(0.5);
+        this.add
+            .text(w - 70, 40, "ACCUEIL", {
+                fontFamily: "Arial", 
+                fontSize: "16px", 
+                color: "#ffffff",
+                fontWeight: "bold"
+            })
+            .setOrigin(0.5);
 
-        backButton.on("pointerdown", () => {
-            this.scene.stop(this.sys.settings.key);
-            this.scene.start(SCENES.HUB); 
-        });
-        
-        backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
-        backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
-    }
+        backButton.on("pointerdown", () => {
+            this.scene.stop(this.sys.settings.key);
+            this.scene.start(SCENES.HUB); 
+        });
+        
+        backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
+        backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
+    }
 
     create() {
         const { width: w, height: h } = this.scale;
@@ -150,45 +150,49 @@ export default class MarocScene extends Phaser.Scene {
         this.add.text(w / 2, h / 2, buttonText, { fontSize: "18px", color: "#fff"}).setOrigin(0.5);
 
         btn.on("pointerdown", () => {
-        if (currentPuzzleData) {
-          puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
-        } else {
-        // 🎉 Salle terminée
-        this.children.removeAll();
-        this.add.text(w / 2, h / 2 - 80, "🎉 Félicitations !", {
-            fontFamily: "Arial",
-            fontSize: "28px",
-            color: "#ffffff",
-            fontStyle: "bold"
-        }).setOrigin(0.5);
+        if (currentPuzzleData) {
+          puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
+        } else {
+        // 🎉 Salle terminée
+        this.children.removeAll();
+        this.add.text(w / 2, h / 2 - 80, "🎉 Félicitations !", {
+            fontFamily: "Arial",
+            fontSize: "28px",
+            color: "#ffffff",
+            fontStyle: "bold"
+        }).setOrigin(0.5);
 
-        this.add.text(w / 2, h / 2 - 20, "Tu as terminé la salle du Maroc !", {
-            fontFamily: "Arial",
-            fontSize: "20px",
-            color: "#c7ffd9",
-        }).setOrigin(0.5);
+        this.add.text(w / 2, h / 2 - 20, "Tu as terminé la salle du Maroc !", {
+            fontFamily: "Arial",
+            fontSize: "20px",
+            color: "#c7ffd9",
+        }).setOrigin(0.5);
 
-        this.add.text(w / 2, h / 2 + 40, "Retourne au hub pour en choisir une autre 🌍", {
-            fontFamily: "Arial",
-            fontSize: "16px",
-            color: "#9fe3c6",
-        }).setOrigin(0.5);
+        this.add.text(w / 2, h / 2 + 40, "Retourne au hub pour en choisir une autre 🌍", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#9fe3c6",
+        }).setOrigin(0.5);
 
-        const backBtn = this.add.rectangle(w / 2, h / 2 + 120, 180, 50, 0x1e6f5c)
-            .setInteractive({ useHandCursor: true })
-            .setStrokeStyle(2, 0xffffff);
-        this.add.text(w / 2, h / 2 + 120, "↩ Retour au hub", {
-            fontFamily: "Arial",
-            fontSize: "16px",
-            color: "#ffffff",
-        }).setOrigin(0.5);
+        const backBtn = this.add.rectangle(w / 2, h / 2 + 120, 180, 50, 0x1e6f5c)
+            .setInteractive({ useHandCursor: true })
+            .setStrokeStyle(2, 0xffffff);
+        this.add.text(w / 2, h / 2 + 120, "↩ Retour au hub", {
+            fontFamily: "Arial",
+            fontSize: "16px",
+            color: "#ffffff",
+        }).setOrigin(0.5);
 
-        backBtn.on("pointerdown", () => this.scene.start(SCENES.HUB));
-      }
-    });
+        // 🚨 CORRECTION MAJEURE ICI : Passage à pointerup et ajout de this.scene.stop
+        backBtn.on("pointerup", () => {
+            this.scene.stop(this.sys.settings.key);
+            this.scene.start(SCENES.HUB);
+        });
+      }
+    });
 
 
-        // CRÉATION DU BOUTON DE RETOUR
-        this.createBackButton(w, h);
-    }
+        // CRÉATION DU BOUTON DE RETOUR
+        this.createBackButton(w, h);
+    }
 }

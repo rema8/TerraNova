@@ -1,5 +1,3 @@
-// src/game/scenes/AmazonieScene.js
-
 import Phaser from "phaser";
 import { puzzleManager } from "../systems/puzzleManager.js";
 import { badgeManager } from "../systems/BadgeManager"; 
@@ -17,22 +15,26 @@ export default class AmazonieScene extends Phaser.Scene {
         if (badgeId.startsWith("badge-amazonie-")) {
             this.time.delayedCall(300, () => {
                 // S'assure de redessiner la scène après la résolution d'un puzzle
+                // Détruit les éléments dynamiques (texte et boutons) créés dans 'create'
                 this.children.getAll().forEach(child => {
                     if (child instanceof Phaser.GameObjects.Rectangle || child instanceof Phaser.GameObjects.Text) {
-                         child.destroy();
+                        child.destroy();
                     }
                 });
+                // Re-crée la scène pour afficher le prochain niveau ou l'écran de fin de salle
                 this.create();
             }, [], this); 
         }
     }
     
     init() {
+        // Nettoie l'écouteur s'il était déjà là et le remet.
         badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
         badgeManager.on('badgeUnlocked', this.handleBadgeUpdate, this);
     }
     
     shutdown() {
+        // Nettoie l'écouteur quand la scène est arrêtée.
         badgeManager.off('badgeUnlocked', this.handleBadgeUpdate, this);
     }
 
@@ -57,6 +59,7 @@ export default class AmazonieScene extends Phaser.Scene {
             this.scene.start(SCENES.HUB); 
         });
         
+        // Effets de survol
         backButton.on('pointerover', () => backButton.setFillStyle(0x7f7f7f));
         backButton.on('pointerout', () => backButton.setFillStyle(0x5a5a5a));
     }
@@ -150,10 +153,23 @@ export default class AmazonieScene extends Phaser.Scene {
 
         const puzzleBtn = this.add.rectangle(w / 2, h / 2, 220, 60, buttonColor).setInteractive({ useHandCursor: true });
         this.add.text(w / 2, h / 2, buttonText, { fontSize: "18px", color: "#ffffff"}).setOrigin(0.5);
+        
+        // Ajout d'un effet de survol pour le bouton principal
+        puzzleBtn.on('pointerover', () => {
+            if (currentPuzzleData) {
+                puzzleBtn.setScale(1.05);
+            }
+        });
+        puzzleBtn.on('pointerout', () => {
+            if (currentPuzzleData) {
+                puzzleBtn.setScale(1);
+            }
+        });
 
-        // 🚨 Correction de l'incohérence : utilisation de puzzleBtn au lieu de btn
+
         puzzleBtn.on("pointerdown", () => {
             if (currentPuzzleData) {
+                // Ouvre le puzzle en cours
                 puzzleManager.openPuzzle(currentPuzzleData.id, currentPuzzleData);
             } else {
                 // 🎉 Salle d'Amazonie terminée
@@ -161,7 +177,8 @@ export default class AmazonieScene extends Phaser.Scene {
                 const TOTAL_PUZZLES = 32; 
                 const puzzlesSolvedCount = badgeManager.unlockedBadges.size;
                 
-                this.children.removeAll();
+                // Nettoie tous les enfants de la scène pour afficher l'écran de fin
+                this.children.removeAll(); 
 
                 if (puzzlesSolvedCount >= TOTAL_PUZZLES) {
                     // --- FIN DU JEU : TOUT EST RÉSOLU (32/32) ---
